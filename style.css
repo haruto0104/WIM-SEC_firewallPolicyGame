@@ -1,0 +1,492 @@
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #e0f2f7;
+    color: #333;
+    overflow-y: auto;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.game-wrapper {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 1000px;
+    width: 90%;
+    box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #007bff;
+    margin-bottom: 15px;
+    font-size: 2.5em;
+    text-align: center;
+}
+
+.description {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #555;
+    line-height: 1.6;
+}
+
+.game-area {
+    width: 100%;
+    margin-bottom: 30px;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.network-path {
+    width: 90%;
+    height: 250px; /* レーン数増加に合わせて高さを調整 */
+    background-color: #f0f0f0;
+    border: 2px solid #a7d9f7;
+    border-radius: 15px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    z-index: 1;
+}
+
+.path-segment {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #0056b3;
+    font-size: 0.9em;
+    box-sizing: border-box;
+    padding: 0 10px;
+    flex-shrink: 0;
+}
+
+.external-network {
+    width: 30%;
+    background-color: #e8f7ff;
+    border-top-left-radius: 13px;
+    border-bottom-left-radius: 13px;
+}
+
+.internal-network {
+    width: 30%;
+    background-color: #f7ffe8;
+    border-top-right-radius: 13px;
+    border-bottom-right-radius: 13px;
+}
+
+.firewall-zone {
+    width: 40%;
+    height: 100%;
+    background-color: #e0e0e0;
+    border-left: 2px dashed #999;
+    border-right: 2px dashed #999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 5;
+    font-weight: bold;
+    color: #555;
+    font-size: 0.9em;
+}
+.firewall-zone .zone-label {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    background-color: rgba(255,255,255,0.7);
+    padding: 2px 8px;
+    border-radius: 5px;
+    font-size: 0.8em;
+    color: #333;
+}
+
+
+.traffic-lanes-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 10px 0;
+    box-sizing: border-box;
+    z-index: 10;
+}
+
+.lane {
+    width: 100%;
+    height: 40px;
+    position: relative;
+    pointer-events: auto;
+}
+
+
+.icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: -50px;
+    animation-duration: 10s;
+    animation-timing-function: linear;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.icon.initial-border {
+    border: 2px solid #bbb; 
+    box-shadow: 0 0 5px rgba(0,0,0,0.1); /* シャドウも控えめに */
+}
+
+.icon.white {
+    background-color: #f8f9fa;
+}
+
+.icon.black {
+    background-color: #212529;
+}
+
+/* 状態を示す縁の色 */
+.icon.green-border {
+    border-color: #00e676; /* より鮮やかな緑 (Material Design Green A700相当) */
+    box-shadow: 0 0 12px rgba(0, 230, 118, 0.9); /* 強めのシャドウ */
+}
+
+.icon.red-border {
+    border-color: #ff1744; /* より鮮やかな赤 (Material Design Red A700相当) */
+    box-shadow: 0 0 12px rgba(255, 23, 68, 0.9); /* 強めのシャドウ */
+}
+
+
+.icon span.ip {
+    position: relative;
+    font-size: 0.6em;
+    color: #ffffff;
+    white-space: nowrap;
+    opacity: 0.9;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    /* テキスト選択禁止（全ブラウザ対応）*/
+    -webkit-user-select: none; /* Safari, Chrome (旧版), Opera (旧版) */
+    -moz-user-select: none;    /* Firefox */
+    -ms-user-select: none;     /* Internet Explorer, Edge (旧版) */
+    user-select: none;         /* 標準 (Chrome, Edge, Firefox最新版, Safari最新版, Opera) */
+}
+.icon.white span.ip {
+    color: #333;
+}
+
+@keyframes moveAcrossPath {
+    from { left: -50px; }
+    to { left: calc(100% + 50px); }
+}
+
+.game-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.mode-selection {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    flex: 1;
+    min-width: 280px;
+    margin: 10px;
+    /* モード選択パネルの表示/非表示制御 */
+    display: block; /* 初期表示はブロック */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.mode-selection.hidden {
+    opacity: 0;
+    transform: translateY(-20px);
+    pointer-events: none; /* クリックを無効化 */
+    position: absolute; /* レイアウトを崩さない */
+    z-index: -1; /* 他の要素の後ろに隠す */
+}
+
+
+.mode-selection h3 {
+    color: #007bff;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+}
+
+.mode-button {
+    padding: 12px 25px;
+    margin: 8px 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mode-button {
+    background-color: #6c757d;
+    color: white;
+}
+.mode-button:hover:not(:disabled) {
+    background-color: #5a6268;
+    transform: translateY(-2px);
+}
+.mode-button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.action-button {
+    padding: 12px 25px;
+    margin: 8px 5px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.1s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.reset-btn {
+    background-color: #ffc107;
+    color: #333;
+}
+.reset-btn:hover:not(:disabled) {
+    background-color: #e0a800;
+    transform: translateY(-2px);
+}
+.full-width-button {
+    width: calc(100% - 20px);
+    margin: 10px auto;
+    display: block;
+}
+
+
+.current-mode-info {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.status-panel {
+    display: flex;
+    justify-content: space-around;
+    width: 100%;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.status-bar {
+    flex: 1;
+    min-width: 250px;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.status-bar label {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+progress {
+    width: 80%;
+    height: 20px;
+    appearance: none;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* Chrome/Safari */
+progress::-webkit-progress-bar {
+    background-color: #e9ecef;
+    border-radius: 5px;
+}
+progress::-webkit-progress-value {
+    background-color: #4CAF50;
+    border-radius: 5px;
+}
+
+/* Firefox */
+progress {
+    background-color: #e9ecef;
+}
+progress::-moz-progress-bar {
+    background-color: #4CAF50;
+}
+
+/* 危険度バーは赤 */
+.danger-bar progress::-webkit-progress-value { background-color: #dc3545; }
+.danger-bar progress::-moz-progress-bar { background-color: #dc3545; }
+
+/* ストレスバーはオレンジ */
+.stress-bar progress::-webkit-progress-value { background-color: #ffc107; }
+.stress-bar progress::-moz-progress-bar { background-color: #ffc107; }
+
+
+.message-display {
+    margin-top: 25px;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff3e0;
+    border: 1px solid #ffcc80;
+    color: #e65100;
+    font-weight: bold;
+    text-align: center;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ゲームリザルトオーバーレイ */
+.game-over-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-size: 1.2em; /* リザルト画面に合わせて調整 */
+    text-align: center;
+    backdrop-filter: blur(5px); /* 背景をぼかす */
+}
+
+.game-over-overlay .result-content {
+    background-color: #fff;
+    color: #333;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    max-width: 600px;
+    width: 90%;
+    box-sizing: border-box;
+    max-height: 90%;
+    overflow: auto;
+}
+
+.game-over-overlay #result-title {
+    color: #007bff;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.game-over-overlay #result-final-status {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.game-over-overlay .result-details {
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+.game-over-overlay .result-details p {
+    margin: 5px 0;
+}
+.game-over-overlay .result-details span {
+    font-weight: bold;
+    color: #007bff;
+}
+
+.game-over-overlay .result-analysis h3 {
+    color: #0056b3;
+    margin-top: 25px;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+}
+.game-over-overlay #analysis-text {
+    text-align: left;
+    line-height: 1.8;
+    font-size: 1em;
+}
+
+.game-over-overlay button {
+    margin-top: 30px;
+    padding: 15px 30px;
+    font-size: 1.1em;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.game-over-overlay button:hover {
+    background-color: #218838;
+}
+
+footer {
+    width: 100%; /* 親要素 (body) の幅いっぱいに広がる */
+    text-align: center;
+    padding: 20px 0;
+    margin-top: auto; /* Flexboxでフッターを最下部に押し出す */
+    background-color: #e9ecef;
+    color: #6c757d;
+    font-size: 0.85em;
+    border-top: 1px solid #dee2e6;
+    /* フッターにposition: fixed; や float: left/right; などがあれば削除してください */
+}
+
+footer a{
+    color: #6c757d;
+}

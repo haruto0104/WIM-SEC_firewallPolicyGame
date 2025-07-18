@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ファイアウォール体験ゲーム</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="game-wrapper">
+        <h1>ファイアウォール体験ゲーム</h1>
+        <p class="description">
+            左の外部ネットワークからアクセスが流れてきます。中央の灰色の<strong>ファイアウォールゾーン</strong>でアイコンをクリックして、アクセスを適切に判断し、サーバーを守りましょう。<br>
+            クリックするとアイコンの<strong>許可/遮断状態</strong>が切り替わり、<strong>縁の色</strong>で視覚化されます。
+        </p>
+
+        <div class="game-area">
+            <div class="network-path">
+                <div class="path-segment external-network">外部ネットワーク (WAN)</div>
+                <div class="firewall-zone" id="firewall-zone">
+                    <span class="zone-label">ファイアウォールゾーン</span>
+                </div>
+                <div class="path-segment internal-network">サーバー (LAN)</div>
+                <div id="traffic-lanes-container" class="traffic-lanes-container">
+                    </div>
+            </div>
+        </div>
+
+        <div class="game-controls">
+            <div class="mode-selection" id="mode-selection-panel">
+                <h3>モード選択</h3>
+                <button id="whitelist-mode" class="mode-button">ホワイトリスト方式</button>
+                <button id="blacklist-mode" class="mode-button">ブラックリスト方式</button>
+                <p id="mode-display" class="current-mode-info"></p>
+            </div>
+
+            <div class="status-panel">
+                <div class="status-bar danger-bar">
+                    <label for="danger-level">サーバー危険度:</label>
+                    <progress id="danger-level" value="0" max="100"></progress>
+                    <span id="danger-value">0 / 100</span>
+                </div>
+                <div class="status-bar stress-bar">
+                    <label for="stress-level">ユーザーストレス:</label>
+                    <progress id="stress-level" value="0" max="100"></progress>
+                    <span id="stress-value">0 / 100</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="message-area" class="message-display"></div>
+        <button id="reset-button" class="action-button reset-btn full-width-button">ゲームリセット</button>
+    </div>
+
+    <div id="game-result-overlay" class="game-over-overlay" style="display: none;">
+        <div class="result-content">
+            <h2 id="result-title">ゲーム結果</h2>
+            <p id="result-final-status"></p>
+            <div class="result-details">
+                <p>最終サーバー危険度: <span id="final-danger-value"></span></p>
+                <p>最終ユーザーストレス: <span id="final-stress-value"></span></p>
+            </div>
+            <div class="result-analysis">
+                <h3>あなたのファイアウォール運用は？</h3>
+                <p id="analysis-text"></p>
+            </div>
+            <button id="restart-game-from-result">もう一度プレイ</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <footer>
+      <div>©WIM-CC 2022-2025 <a href="https://w-haruto.wim-cc.com/works/license/" target="_blank">利用規約</a>
+      <div>ファイアウォール体験ゲーム（2025.07.18）</div>
+    </footer>
+</body>
+</html>
